@@ -14,11 +14,12 @@ export default function HomeScreen() {
   const [loading, setLoading] = useState(true)
   const [myExercisesList, setMyExercisesList] = useState([])
   const navigation = useNavigation()
-  const auth = getAuth(app);
-  const user = auth.currentUser;
+  const auth = getAuth(app)
+  const user = auth.currentUser
   const db = getFirestore(app)
-  const { currentStatus, setCurrentStatus, timeUntilNextBreak, setTimeUntilNextBreak, workTimeMessage, setWorkTimeMessage } = useStatus();
-  const { setExercisesList } = useExercise();
+  const { currentStatus, setCurrentStatus, timeUntilNextBreak, setTimeUntilNextBreak, workTimeMessage, setWorkTimeMessage } = useStatus()
+  const { setExercisesList } = useExercise()
+  const [randomTip, setRandomTip] = useState('')
 
   useEffect(() => {
     if (user) {
@@ -26,93 +27,95 @@ export default function HomeScreen() {
         const exercisesData = querySnapshot.docs.map(doc => ({
           id: doc.id,
           ...doc.data()
-        }));
-        setMyExercisesList(exercisesData);
-        setLoading(false);
-      });
+        }))
+        setMyExercisesList(exercisesData)
+        setLoading(false)
+      })
   
-      return () => unsubscribe();
+      return () => unsubscribe()
     }
-  }, [user, db]);
+    
+  }, [user, db])
 
   useEffect(() => {
     getExercises()
+    fetchRandomTip()
     const fetchAndCalculateTimes = async () => {
-    fetchScheduleAndStatus();
+    fetchScheduleAndStatus()
     }
-    fetchAndCalculateTimes();
+    fetchAndCalculateTimes()
 
     const intervalId = setInterval(() => {
       fetchAndCalculateTimes()
   }, 60000)
-
-  return () => clearInterval(intervalId);
-  }, []);
+  
+  return () => clearInterval(intervalId)
+  }, [])
 
   const fetchScheduleAndStatus = async () => {
 
-    const scheduleSnapshot = await getDocs(collection(db, "Schedules", user.uid, "UserSchedule"));
+    const scheduleSnapshot = await getDocs(collection(db, "Schedules", user.uid, "UserSchedule"))
     if (!scheduleSnapshot.empty) {
-      const scheduleData = scheduleSnapshot.docs[0].data();
-      const today = new Date();
-      const workStartTime = new Date(scheduleData.startWorkTime.toDate());
-      const workEndTime = new Date(scheduleData.endWorkTime.toDate());
+      const scheduleData = scheduleSnapshot.docs[0].data()
+      const today = new Date()
+      const workStartTime = new Date(scheduleData.startWorkTime.toDate())
+      const workEndTime = new Date(scheduleData.endWorkTime.toDate())
       // Adjust start and end times to today
-      workStartTime.setFullYear(today.getFullYear(), today.getMonth(), today.getDate());
-      workEndTime.setFullYear(today.getFullYear(), today.getMonth(), today.getDate());
+      workStartTime.setFullYear(today.getFullYear(), today.getMonth(), today.getDate())
+      workEndTime.setFullYear(today.getFullYear(), today.getMonth(), today.getDate())
       
       const breaksData = scheduleData.breaks.map(b => ({
         startBreakTime: new Date(b.startBreakTime.toDate()),
         endBreakTime: new Date(b.endBreakTime.toDate())
       })).map(b => {
         // Adjust break times to today
-        const start = new Date(b.startBreakTime);
-        const end = new Date(b.endBreakTime);
-        start.setFullYear(today.getFullYear(), today.getMonth(), today.getDate());
-        end.setFullYear(today.getFullYear(), today.getMonth(), today.getDate());
-        return { startBreakTime: start, endBreakTime: end };
-      });
+        const start = new Date(b.startBreakTime)
+        const end = new Date(b.endBreakTime)
+        start.setFullYear(today.getFullYear(), today.getMonth(), today.getDate())
+        end.setFullYear(today.getFullYear(), today.getMonth(), today.getDate())
+        return { startBreakTime: start, endBreakTime: end }
+      })
 
-      setWorkTimeMessage(calculateWorkTimeMessage(today, workStartTime, workEndTime));
-      calculateBreaks(today, breaksData, workStartTime, workEndTime);
+      setWorkTimeMessage(calculateWorkTimeMessage(today, workStartTime, workEndTime))
+      calculateBreaks(today, breaksData, workStartTime, workEndTime)
     }
 
-    const statusRef = doc(db, "UserStatus", user.uid);
-    const statusSnap = await getDoc(statusRef);
+    const statusRef = doc(db, "UserStatus", user.uid)
+    const statusSnap = await getDoc(statusRef)
     if (statusSnap.exists()) {
-      setCurrentStatus(statusSnap.data().status);
+      setCurrentStatus(statusSnap.data().status)
     }
-  };
+  }
 
   const calculateWorkTimeMessage = (now, start, end) => {
     if (now < start) {
-      return `Work starts in: ${formatTimeDiff(start - now)}`;
+      return `Work starts in: ${formatTimeDiff(start - now)}`
     } else if (now >= start && now <= end) {
-      return `Work ends in: ${formatTimeDiff(end - now)}`;
+      return `Work ends in: ${formatTimeDiff(end - now)}`
     } else {
-      return "Work has ended for today.";
+      return "Work has ended for today."
     }
-  };
+  }
 
   const calculateBreaks = (now, breaks, workStartTime, workEndTime) => {
     if (now < workStartTime || now > workEndTime) {
-      setTimeUntilNextBreak("No breaks scheduled");
-      return;
+      setTimeUntilNextBreak("No breaks scheduled")
+      return
     }
 
-    const upcomingBreak = breaks.find(b => now < b.startBreakTime);
+    const upcomingBreak = breaks.find(b => now < b.startBreakTime)
     if (upcomingBreak) {
-      setTimeUntilNextBreak(`Break in: ${formatTimeDiff(upcomingBreak.startBreakTime - now)}`);
+      setTimeUntilNextBreak(`Break in: ${formatTimeDiff(upcomingBreak.startBreakTime - now)}`)
     } else {
-      setTimeUntilNextBreak("No breaks scheduled");
+      setTimeUntilNextBreak("No breaks scheduled")
     }
-  };
+  }
 
   const formatTimeDiff = (diff) => {
-    const hours = Math.floor(diff / (3600 * 1000));
-    const minutes = Math.floor((diff % (3600 * 1000)) / (60 * 1000));
-    return `${hours}h ${minutes}m`;
-  };
+    const hours = Math.floor(diff / (3600 * 1000))
+    const minutes = Math.floor((diff % (3600 * 1000)) / (60 * 1000))
+    return `${hours}h ${minutes}m`
+  }
 
   const getExercises = async () => {
     try {
@@ -126,6 +129,15 @@ export default function HomeScreen() {
       console.error("Error getting exercises:", error)
     }
   }
+
+const fetchRandomTip = async () => {
+      const tipsSnapshot = await getDocs(collection(db, "Tips"))
+      const tips = tipsSnapshot.docs.map(doc => doc.data().name)
+      if (tips.length > 0) {
+        const randomIndex = Math.floor(Math.random() * tips.length)
+        setRandomTip(tips[randomIndex])
+      }
+    }
 
   return (
     <SafeAreaView className="h-full flex bg-gray-900">
@@ -146,7 +158,7 @@ export default function HomeScreen() {
 
             <View className="bg-gray-800 py-2 px-4 rounded-3xl my-5 mx-5">
             <Text className="text-3xl font-bold text-[#fff6e3] text-center mb-2">Health Tip</Text>
-            <Text className="text-2xl text-[#fff6e3] my-2">Random Tip</Text>
+            <Text className="text-2xl text-[#fff6e3] my-2">{randomTip}</Text>
             </View>
 
           <View className="flex items-center rounded-3xl bg-gray-800 py-2 px-4 my-5 mx-5">

@@ -8,65 +8,65 @@ import { getAuth } from 'firebase/auth'
 
 export default function GoalsScreen() {
   const [goals, setGoals] = useState([])
-  const auth = getAuth(app);
-  const user = auth.currentUser;
+  const auth = getAuth(app)
+  const user = auth.currentUser
   const db = getFirestore(app)
   const [isModalVisible, setIsModalVisible] = useState(false)
   const [newGoalName, setNewGoalName] = useState("")
 
   useEffect(() => {
     if (user) {
-      fetchGoals();
+      fetchGoals()
     }
-  }, [user]);
+  }, [user])
 
   const fetchGoals = async () => {
-    if (!user) return;
-    const goalsRef = collection(db, "Goals", user.uid, "UserGoals");
-    const querySnapshot = await getDocs(goalsRef);
+    if (!user) return
+    const goalsRef = collection(db, "Goals", user.uid, "UserGoals")
+    const querySnapshot = await getDocs(goalsRef)
     const goalsData = querySnapshot.docs.map(doc => ({
       id: doc.id,
       ...doc.data()
-    }));
-    setGoals(goalsData);
-  };
+    }))
+    setGoals(goalsData)
+  }
 
   const addGoal = async () => {
-    if (!user) return;
+    if (!user) return
     try {
       await addDoc(collection(db, "Goals", user.uid, "UserGoals"), {
         name: newGoalName,
         count: 0,
         checked: false,
-      });
-      setNewGoalName("");
-      fetchGoals();
-      setIsModalVisible(false);
+      })
+      setNewGoalName("")
+      fetchGoals()
+      setIsModalVisible(false)
     } catch (error) {
-      console.error("Error adding document: ", error);
+      console.error("Error adding document: ", error)
     }
-  };
+  }
 
   const updateGoal = async (goalId, currentCount, checked) => {
-    if (!user) return;
-    const newCount = checked ? Math.max(currentCount - 1, 0) : currentCount + 1;
-    const goalRef = doc(db, "Goals", user.uid, "UserGoals", goalId);
+    if (!user) return
+    const newCount = checked ? Math.max(currentCount - 1, 0) : currentCount + 1
+    const goalRef = doc(db, "Goals", user.uid, "UserGoals", goalId)
     await updateDoc(goalRef, {
       count: newCount,
       checked: !checked
-    });
-    fetchGoals();
-  };
+    })
+    fetchGoals()
+  }
 
   const deleteGoal = async (goalId) => {
-    if (!user) return;
+    if (!user) return
     try {
-      await deleteDoc(doc(db, "Goals", user.uid, "UserGoals", goalId));
-      fetchGoals();
+      await deleteDoc(doc(db, "Goals", user.uid, "UserGoals", goalId))
+      fetchGoals()
     } catch (error) {
-      console.error("Error deleting document: ", error);
+      console.error("Error deleting document: ", error)
     }
-  };
+  }
   
   return (
     <SafeAreaView className="flex h-full bg-gray-900">
