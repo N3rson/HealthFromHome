@@ -2,7 +2,9 @@
 
 Welcome to **Health From Home**, a comprehensive wellness app designed specifically for remote workers. This app aims to enhance your well-being through a variety of features focused on health and productivity. The app is a solo project, fully created by me.
 .apk file to install on android, can be also run via Expo Go on Android Studios emulator. 
+
 email: test123@northumbria.ac.uk
+
 password: test123
 
 ## Features
