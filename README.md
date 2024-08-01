@@ -5,7 +5,7 @@ Welcome to **Health From Home**, a comprehensive wellness app designed specifica
 ## Features
 
 ### Login and Authentication
-![Login Page](images/login_page.png)
+<img src="images/login_page.png" alt="Login Page" width="200"/>
 - **Secure Login**: Users must log in with an email and password to access the app. Firebase handles authentication to ensure your data is safe.
 
 ### Home Page
@@ -15,20 +15,20 @@ Welcome to **Health From Home**, a comprehensive wellness app designed specifica
 - **My Exercises**: Quickly view and access exercises you’ve added to your list.
 
 ### Exercise Library
-![Exercise Library](images/exercise_library.png)
+![Exercise Library](images/exercise_page.png) ![Exercise Details](images/exercise_details.png)
 - **Comprehensive List**: Browse through a variety of exercises fetched from the Firebase database.
 - **Search Functionality**: Easily find exercises by name.
 - **Exercise Info**: Detailed description and instructions for each exercise.
 - **Favorites**: Add or remove exercises from your personal list.
 
 ### Work Page
-![Work Page](images/work_page.png)
+![Work Page](images/work_page.png) ![Work schedule](images/work_schedule.png) ![Work status](images/work_status.png)
 - **Work Status**: Monitor and change your current work status.
 - **Break Timer**: Keep track of your next break and work end time.
 - **Work Schedule**: Set up your work schedule, including start and end times, and break times.
 
 ### Goals Page
-![Goals Page](images/goals_page.png)
+![Goals Page](images/goals_page.png) ![Goals Add](images/goals_add.png)
 - **Personal Goals**: Track and manage your daily goals, such as water intake or exercise routines.
 - **Real-Time Updates**: Goals are updated in real-time and stored in the Firebase database.
 
