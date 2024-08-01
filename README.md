@@ -49,12 +49,14 @@ Firebase: Utilized for backend services, including database management, authenti
 
 
 Program Structure
+
 Components: Reusable building blocks of the app.
 Context: Manages state and data flow through the component tree.
 Navigations: Handles screen transitions within the app.
 Screens: Main views for user interaction, representing different aspects of the wellness experience.
 
 Firebase Integration
+
 Firestore Database: Stores all app data, ensuring scalability and flexibility.
 Authentication: Secure login system using email and password.
 Real-Time Data: Instant updates for user-specific data like goals and exercises.
