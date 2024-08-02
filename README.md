@@ -11,6 +11,7 @@ password: test123
 
 ### Login and Authentication
 <img src="images/login_page.png" alt="Login Page" width="200"/>
+
 - **Secure Login**: Users must log in with an email and password to access the app. Firebase handles authentication to ensure your data is safe.
 
 ### Home Page
